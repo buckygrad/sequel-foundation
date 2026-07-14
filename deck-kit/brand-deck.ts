@@ -5,6 +5,9 @@ import type { IPptxGenJSSlide } from "pptx-automizer";
 import { FONT } from "./fonts";
 import { slimPresentationZip } from "./pptx-slim";
 
+// Re-exported so app-side brand-deck config modules can expose one stable path.
+export { FONT } from "./fonts";
+
 // Branded-deck engine — the merged canonical of the two hubs' brand-deck.ts
 // (formerly hand-synced twins). Every generated PowerPoint renders ONTO the
 // app's approved brand template instead of being drawn from scratch, so each

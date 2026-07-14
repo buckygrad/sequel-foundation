@@ -18,8 +18,10 @@ Two documents carry the accumulated know-how; read them before building anything
 | `@sequel/foundation/theme/ThemeToggle` | The Light / Dark / Browser header toggle (client component) |
 | `@sequel/foundation/ui` | Button (incl. the accent hand-off variant), Callout, Field, StatusBadges, SaveStateIndicator, Toast + viewport/store, ShowMore, Breadcrumbs, ExportBar |
 | `@sequel/foundation/llm` | `getClient`, `modelFor`/`withModelFallback` (task-class model config), `llmErrorEvent`, `streamJob`/`consumeLlmStream` |
-| `@sequel/foundation/deck-kit` | Native-shape chart primitives (`deck-charts`), `slimPresentationZip` (dedupe + prune), brand `FONT` |
+| `@sequel/foundation/deck-kit` | Native-shape chart primitives (`deck-charts`), the branded-deck engine (`createBrandDeckEngine` + table/status/card primitives), `slimPresentationZip` (dedupe + prune), brand `FONT` |
 | `@sequel/foundation/docs-kit/guide-contents` | Bookmarked-outline Contents machinery for generated .docx guides |
+| `@sequel/foundation/docs-kit/docx-brand` | Shared docx brand constants (NAVY/BLUE/LIME/GREY/CRITICAL/FONT) |
+| `@sequel/foundation/docs-kit/xlsx-brand` | Shared ExcelJS styles — brand-navy header standard, status fills, `addHeader`/`titleBlock`/`workbookToBuffer` |
 | `@sequel/foundation/scripts/*` | `clean-icloud-dups.sh`, `preseed-deck-template.mjs`, `render-verify.mjs` |
 
 ## Consuming from a Next.js app
@@ -82,6 +84,9 @@ When the two existing hubs adopt this package, these local copies are deleted an
 | `lib/exporters/pptx-slim.ts` (Sequel_Ortho) / prune logic inside `brand-deck.ts` | `deck-kit` (`slimPresentationZip`) |
 | `lib/exporters/deck-charts.ts` (project-insights) | `deck-kit` |
 | `scripts/lib/guide-contents.mjs` (Sequel_Ortho) | `docs-kit/guide-contents` |
+| `lib/exporters/brand-deck.ts` (both) | `deck-kit/brand-deck` — the app keeps a thin config module: `createBrandDeckEngine({ templatePath, brands, defaultBrand })` plus its `pickBrand` entity matcher; primitives (`th`, `td`, `contentTable`, `statBox`, `takeaway`, `riskCard`, …) import from the kit |
+| per-file `NAVY`/`BLUE`/`LIME`/`GREY`/`FONT` consts in `*-docx.ts` (both) | `docs-kit/docx-brand` |
+| `lib/exporters/xlsx-helpers.ts` (Sequel_Ortho) + inline header styling in PI xlsx exporters | `docs-kit/xlsx-brand` |
 | `scripts/clean-icloud-dups.sh`, `scripts/preseed-deck-template.mjs` | `scripts/*` |
 | `components/ui/*` (Sequel_Ortho), `components/{Button,Callout,ShowMore,Breadcrumbs,ExportBar}.tsx` (project-insights) | `ui` — **note the merges below** |
 
@@ -91,14 +96,15 @@ When the two existing hubs adopt this package, these local copies are deleted an
 - **Callout** — Acquisition Hub's canonical (icon + optional title, `role` derived from tone). Project Hub's `role` prop is dropped; tone set is identical.
 - **StatusBadges** — `ApprovedBadge` now takes `approvedAt` (+ optional `label`) instead of the playbook domain type.
 - **theme** — `THEME_STORAGE_KEY` constant became `themeInitScript(storageKey)` + a `storageKey` prop; behavior otherwise identical.
+- **brand-deck engine (Phase B)** — the BRANDS map / SEQ const became a `BrandDeckEngineConfig` the app supplies (template path + per-brand slide map + header fills); `spec.brand` is optional and defaults to the engine's `defaultBrand`. The engine's post-assembly cleanup now calls `slimPresentationZip` (a superset of the old `pruneUnusedLayoutsAndMedia`: same layout/media prune plus byte-identical media dedupe and chart/diagram/notes pruning) — proven end-to-end against the Acquisition Hub's real template (0.19 MB output from the 10.9 MB template, clean LibreOffice render).
+- **contentTable (Phase B)** — canonical style is Project Hub's horizontal-rules-only (Tufte) table with `margin [3,10,3,10]` and zebra `FAFAFB`; the Acquisition Hub's old full grid / `margin 5` / zebra `F7F7F8` is superseded (pass `border`/`margin` opts if a specific export needs the old look). `CONTENT.bottom` standardizes on 6.7 (AH was 6.6). `th()` gains the fontSize/align superset; AH-only `contentBullets`/`FOOTNOTE_Y` and PI-only `takeaway`/`riskCard`/`gaugeBar`/etc. are all included.
+- **xlsx headers (Phase B)** — the canonical workbook header fill is **brand navy** (parity with deck contentTable headers and docx table shading). The Acquisition Hub's zinc-900 header is superseded at adoption; Project Hub's exporters already used navy/blue.
 
-## Not here yet (Phase B)
+## Not here yet
 
-- **`brand-deck.ts` template engine** (`buildBrandedDeck`, `buildEmptyRoot`, `pruneUnusedLayoutsAndMedia`, table/status primitives) — needs the SEQ/ON/FVO slide-index map and header fills parameterized into a brand-template descriptor, and the two hubs' drift reconciled. The approved template `.pptx` binaries also live with the apps until then.
-- **docx brand helper** — Project Hub's docx exporters each re-declare `NAVY`/`BLUE`/`FONT`; consolidate when extracting.
-- **xlsx style helper** — decide brand-navy vs. the Acquisition Hub's current zinc header fill, then extract.
 - **VCP engine** — clean single-file twin, but its tie-out tests and constants are per-app; extract with care.
 - **Nav shell / tile-parity registry pattern** — reusable pattern, app-specific registries; extract the shell + parity-test helper.
+- **graphic-render / pitch-library build scripts** — Acquisition Hub-specific for now (LibreOffice-dependent, tuned to its library).
 - **App starter template** (Phase D) — a `create-sequel-app` template repo wiring all of the above.
 
 ## Development

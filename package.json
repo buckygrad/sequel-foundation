@@ -1,6 +1,6 @@
 {
   "name": "@sequel/foundation",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Shared Sequel Ortho design system, UX conventions, branded deck/document kit, and LLM plumbing — extracted from Project Hub (project-insights) and the Acquisition Hub (Sequel_Ortho).",
   "type": "module",
@@ -13,7 +13,10 @@
     "./ui": "./ui/index.ts",
     "./llm": "./llm/index.ts",
     "./deck-kit": "./deck-kit/index.ts",
+    "./deck-kit/brand-deck": "./deck-kit/brand-deck.ts",
     "./docs-kit/guide-contents": "./docs-kit/guide-contents.mjs",
+    "./docs-kit/docx-brand": "./docs-kit/docx-brand.ts",
+    "./docs-kit/xlsx-brand": "./docs-kit/xlsx-brand.ts",
     "./scripts/*": "./scripts/*"
   },
   "scripts": {
@@ -27,6 +30,7 @@
   "peerDependencies": {
     "@anthropic-ai/sdk": ">=0.100.0",
     "docx": ">=9",
+    "exceljs": ">=4.4.0",
     "jszip": ">=3.10.0",
     "next": ">=15",
     "pptx-automizer": ">=0.8.0",
@@ -35,6 +39,7 @@
   "peerDependenciesMeta": {
     "@anthropic-ai/sdk": { "optional": true },
     "docx": { "optional": true },
+    "exceljs": { "optional": true },
     "jszip": { "optional": true },
     "next": { "optional": true },
     "pptx-automizer": { "optional": true }
@@ -44,6 +49,7 @@
     "@types/node": "^24",
     "@types/react": "^19",
     "docx": "^9.6.1",
+    "exceljs": "^4.4.0",
     "jszip": "^3.10.1",
     "next": "^16.2.10",
     "pptx-automizer": "^0.8.1",

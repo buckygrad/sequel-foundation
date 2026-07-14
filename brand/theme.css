@@ -1,0 +1,177 @@
+/*
+ * Sequel application theme — Tailwind v4 layer over brand/tokens.css.
+ * Extracted from Project Hub (project-insights) / Acquisition Hub (Sequel_Ortho)
+ * globals.css so every Sequel app shares one theming mechanism.
+ *
+ * Usage (in the app's globals.css):
+ *
+ *   @import "tailwindcss";
+ *   @import "@sequel/foundation/brand/theme.css";
+ *   @source "../node_modules/@sequel/foundation";   // scan package components for classes
+ *
+ * The app still owns:
+ *   - Fonts: load Montserrat + Geist Mono via next/font/google in the root
+ *     layout with variables --font-montserrat / --font-geist-mono (this file
+ *     references those variables).
+ *   - Theme init: render THEME_INIT_SCRIPT (from @sequel/foundation/theme) as
+ *     the first element of <body> so <html data-theme="…"> is stamped before
+ *     first paint, and mount <ThemeToggle/> in the header.
+ */
+
+/* Dark mode: the resolved theme is stamped on <html data-theme="…"> by the
+ * pre-hydration script (theme/theme.ts) and the header toggle. Re-key
+ * Tailwind's `dark:` variant to that attribute so one mechanism — never the
+ * raw media query — drives every dark style. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Brand palette — official SequelOrtho Brand Guide v1.0 (see brand/tokens.css
+ * for the framework-free source of truth and BRAND.md for usage). */
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+
+  --brand-primary: #009ddd;
+  --brand-primary-600: #0083bd;
+  --brand-primary-700: #006a9c;
+  --brand-navy: #0f1263;
+  --brand-navy-muted: #232a7a;
+  --brand-accent: #cad400;
+  --brand-accent-dark: #9aa300;
+  --brand-muted: #707372;
+  --brand-surface: #f8f8f8;
+  --brand-danger: #e51919;
+
+  /* RYG status colors for stoplight UIs. `-text` variants are for colored TEXT
+   * (letters, scores) and carry their own dark values — the "dark yellow
+   * problem": readable amber text on white is unreadable on near-black, so
+   * dark mode lightens statuses instead of reusing the light palette. */
+  --ryg-green: #16a34a;
+  --ryg-yellow: #eab308;
+  --ryg-red: #dc2626;
+  --ryg-none: #d4d4d8;
+  --ryg-green-text: #15803d;
+  --ryg-yellow-text: #a16207;
+  --ryg-red-text: #dc2626;
+
+  /* Semantic status tokens — name the intent, not the hue. Aligned to the RYG
+   * scale so success/warning read consistently with the stoplight UI. */
+  --brand-success: #16a34a;
+  --brand-warning: #b45309;
+}
+
+/* Dark theme values — desaturated/lightened statuses (Material dark-theme
+ * guidance) and brand tokens re-pitched for dark surfaces. Every `text-brand*`,
+ * `bg-brand*`, and RYG usage across the app re-colors through these vars. */
+:root[data-theme="dark"] {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+
+  --brand-primary: #35b5e8;
+  --brand-primary-600: #54c5ec;
+  --brand-primary-700: #8fd9f2;
+  --brand-navy: #c3c8f5;
+  --brand-navy-muted: #a5abe8;
+  --brand-accent: #d6e04a;
+  --brand-accent-dark: #cad400;
+  --brand-muted: #a1a1aa;
+  --brand-surface: #111114;
+  --brand-danger: #f87171;
+
+  --ryg-green: #4ade80;
+  --ryg-yellow: #facc15;
+  --ryg-red: #f87171;
+  --ryg-none: #52525b;
+  --ryg-green-text: #4ade80;
+  --ryg-yellow-text: #facc15;
+  --ryg-red-text: #f87171;
+
+  --brand-success: #4ade80;
+  --brand-warning: #fbbf24;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-montserrat);
+  --font-mono: var(--font-geist-mono);
+
+  /* SequelOrtho brand tokens, usable as bg-brand / text-brand / border-brand. */
+  --color-brand: var(--brand-primary);
+  --color-brand-600: var(--brand-primary-600);
+  --color-brand-700: var(--brand-primary-700);
+  --color-brand-navy: var(--brand-navy);
+  --color-brand-navy-muted: var(--brand-navy-muted);
+  --color-brand-accent: var(--brand-accent);
+  --color-brand-accent-dark: var(--brand-accent-dark);
+  --color-brand-muted: var(--brand-muted);
+  --color-brand-surface: var(--brand-surface);
+  --color-brand-danger: var(--brand-danger);
+
+  --color-ryg-green: var(--ryg-green);
+  --color-ryg-yellow: var(--ryg-yellow);
+  --color-ryg-red: var(--ryg-red);
+  --color-ryg-none: var(--ryg-none);
+
+  --color-brand-success: var(--brand-success);
+  --color-brand-warning: var(--brand-warning);
+
+  /* Remap Tailwind's default blue palette to SequelOrtho blues so existing
+   * `bg-blue-600`, `text-blue-700`, etc. adopt the brand automatically. */
+  --color-blue-50: #e6f6fc;
+  --color-blue-100: #c3eaf8;
+  --color-blue-200: #8fd9f2;
+  --color-blue-300: #54c5ec;
+  --color-blue-400: #1eafe3;
+  --color-blue-500: #009ddd;
+  --color-blue-600: #0083bd;
+  --color-blue-700: #006a9c;
+  --color-blue-800: #232a7a;
+  --color-blue-900: #0f1263;
+  --color-blue-950: #080a3a;
+}
+
+/* No-JS fallback: with scripts disabled nothing stamps data-theme, so follow
+ * the OS for the base ground only (full dark styling needs the attribute). */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  font-family:
+    var(--font-montserrat), "Montserrat", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Keyboard-focus baseline: a visible brand focus ring on every keyboard-focused
+   interactive element. Scoped to :focus-visible so mouse clicks don't show it;
+   components may still set their own ring. */
+:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Print-friendly views: any page saves cleanly to PDF from the browser. Hide
+   the app chrome (header/nav) and anything tagged data-no-print (export
+   buttons, role switchers), drop link underlines, and let content use the page. */
+@media print {
+  header,
+  footer,
+  [data-no-print] {
+    display: none !important;
+  }
+  body {
+    background: #fff !important;
+  }
+  a {
+    text-decoration: none !important;
+    color: inherit !important;
+  }
+  .max-w-7xl,
+  .max-w-5xl,
+  .max-w-4xl {
+    max-width: none !important;
+  }
+}

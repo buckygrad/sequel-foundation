@@ -1,0 +1,45 @@
+/*
+ * Brand palette — official SequelOrtho Brand Guide v1.0 (Sept 2024).
+ * Imported into Project Insights from the Sequel Ortho playbook project.
+ *
+ * Portable CSS custom properties — no framework dependency. Drop this file in
+ * and reference the variables (e.g. color: var(--brand-primary)). If/when the
+ * project adopts Tailwind, mirror these into an @theme block.
+ *
+ *   Light Blue (primary)  #009DDD (RGB 0,157,221)   — h2, CTAs, links
+ *   Light Blue 600/700    #0083BD / #006A9C          — hover / pressed (derived)
+ *   Dark Blue (navy)      #0F1263 (RGB 15,18,99)     — headlines on light, dark accent
+ *   Dark Blue muted       #232A7A                    — secondary dark surfaces (derived)
+ *   Lime accent           #CAD400 (RGB 202,212,0)
+ *   Lime dark             #9AA300                    — derived
+ *   Grey text             #707372 (RGB 112,115,114)
+ *   Surface tint          #F8F8F8
+ *   Error                 #E51919
+ */
+
+:root {
+  --brand-primary: #009ddd;
+  --brand-primary-600: #0083bd;
+  --brand-primary-700: #006a9c;
+  --brand-navy: #0f1263;
+  --brand-navy-muted: #232a7a;
+  --brand-accent: #cad400;
+  --brand-accent-dark: #9aa300;
+  --brand-muted: #707372;
+  --brand-surface: #f8f8f8;
+  --brand-danger: #e51919;
+
+  /* Blue ramp — runs from brand Light Blue (#009DDD, 500) toward brand
+   * Dark Blue (#0F1263, 900). Mirror Tailwind's blue-* scale. */
+  --blue-50: #e6f6fc;
+  --blue-100: #c3eaf8;
+  --blue-200: #8fd9f2;
+  --blue-300: #54c5ec;
+  --blue-400: #1eafe3;
+  --blue-500: #009ddd;
+  --blue-600: #0083bd;
+  --blue-700: #006a9c;
+  --blue-800: #232a7a;
+  --blue-900: #0f1263;
+  --blue-950: #080a3a;
+}

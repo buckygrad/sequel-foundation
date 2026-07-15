@@ -19,7 +19,7 @@ Then work through the short **Template checklist** at the bottom of the template
 **1. Install** (public repo — no tokens needed anywhere):
 
 ```bash
-npm i "@sequel/foundation@github:buckygrad/sequel-foundation#v0.2.2"
+npm i "@sequel/foundation@github:buckygrad/sequel-foundation#v0.3.1"
 ```
 
 ```ts
@@ -43,7 +43,7 @@ transpilePackages: ["@sequel/foundation"],
 |---|---|
 | `…/brand/theme.css` | Brand tokens with dark mode, RYG status colors, focus ring, print rules |
 | `…/theme` | Light / Dark / Browser theme with a no-flash pre-hydration script |
-| `…/ui` | Button (incl. the chartreuse assign/hand-off variant), Callout, Field, badges, toasts, ShowMore, Breadcrumbs, ExportBar |
+| `…/ui` | Button (incl. the chartreuse assign/hand-off variant), Callout, Field, badges, toasts (with next-step action links), ShowMore, Breadcrumbs, ExportBar |
 | `…/llm` | Claude client seam, per-task model configuration with fallback, streaming that survives serverless timeouts |
 | `…/deck-kit` | Branded PowerPoint engine (approved template, native editable charts, auto-slimming) |
 | `…/docs-kit/*` | Word/Excel brand constants and styles, clickable-contents machinery for generated guides |
@@ -52,9 +52,10 @@ The full subpath reference and consumption details are in the [README](README.md
 
 ## House rules
 
-- **Read the two docs first.** [DESIGN-CONVENTIONS.md](docs/DESIGN-CONVENTIONS.md) (the UX rules that make Sequel apps feel like one product) and [DECK-CRAFT.md](docs/DECK-CRAFT.md) (everything we learned generating board-quality decks) will save you weeks.
+- **Read the two docs first.** [DESIGN-CONVENTIONS.md](docs/DESIGN-CONVENTIONS.md) (the UX rules that make Sequel apps feel like one product — including §3's post-action feedback rule and §5's navigation patterns) and [DECK-CRAFT.md](docs/DECK-CRAFT.md) (everything we learned generating board-quality decks) will save you weeks.
+- **Every action confirms; no page dead-ends.** Mutations pop a `toastSaved` confirmation — with an action link (`{ action: { label, href } }`) when there's a natural next step — and every leaf page links onward. Before shipping a PR that adds or moves a screen, run the §5a nav/flow review checklist in DESIGN-CONVENTIONS.md.
 - **Never copy foundation code into your app.** To change anything shared, make the change in this repo, tag a release, and bump the version pin in each app. That's what keeps every tool consistent.
-- **Pin a tag, not main.** Your `package.json` references a version tag (e.g. `#v0.2.2`), so foundation changes never reach your app until you choose to take them.
+- **Pin a tag, not main.** Your `package.json` references a version tag (e.g. `#v0.3.1`), so foundation changes never reach your app until you choose to take them.
 - **AI calls follow the pattern.** Models come from configuration (`modelFor` + `withModelFallback`), responses stream (`streamJob` / `consumeLlmStream`), errors are typed. The template's `ai-demo` route is the reference.
 
 ## Links

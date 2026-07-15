@@ -28,6 +28,8 @@ function AutoDismiss({ item }: { item: ToastItem }) {
     <Toast
       tone={item.tone}
       message={item.message}
+      action={item.action}
+      onActionClick={() => dismissToast(item.id)}
       onDismiss={() => dismissToast(item.id)}
     />
   );

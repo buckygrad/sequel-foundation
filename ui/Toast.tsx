@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
+import type { ToastAction } from "./toast/store";
 
 // Presentational toast chip. The orchestration layer (module-level store +
 // auto-dismiss + the fixed bottom-right stack) lives in ./toast; keeping the
@@ -16,10 +18,14 @@ const TONES: Record<ToastTone, { box: string; icon: string }> = {
 export function Toast({
   tone = "success",
   message,
+  action,
+  onActionClick,
   onDismiss,
 }: {
   tone?: ToastTone;
   message: ReactNode;
+  action?: ToastAction;
+  onActionClick?: () => void;
   onDismiss?: () => void;
 }) {
   const t = TONES[tone];
@@ -31,6 +37,15 @@ export function Toast({
     >
       <span aria-hidden>{t.icon}</span>
       <span>{message}</span>
+      {action && (
+        <Link
+          href={action.href}
+          onClick={onActionClick}
+          className="ml-1 whitespace-nowrap font-semibold text-white underline underline-offset-2 hover:text-white/85"
+        >
+          {action.label}
+        </Link>
+      )}
       {onDismiss && (
         <button
           type="button"

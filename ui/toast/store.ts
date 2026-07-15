@@ -9,11 +9,13 @@ import { useSyncExternalStore } from "react";
 // repo convention over set-state-in-effect).
 
 export type ToastTone = "success" | "info" | "danger";
+export type ToastAction = { label: string; href: string };
 export type ToastItem = {
   id: number;
   tone: ToastTone;
   message: string;
   ttl: number;
+  action?: ToastAction;
 };
 
 let items: ToastItem[] = [];
@@ -26,12 +28,14 @@ function emit() {
 
 export function pushToast(
   message: string,
-  opts: { tone?: ToastTone; ttl?: number } = {},
+  opts: { tone?: ToastTone; ttl?: number; action?: ToastAction } = {},
 ): number {
   const id = nextId++;
+  // Toasts carrying a next-step link get longer to be read and clicked.
+  const ttl = opts.ttl ?? (opts.action ? 6000 : 3500);
   items = [
     ...items,
-    { id, tone: opts.tone ?? "success", message, ttl: opts.ttl ?? 3500 },
+    { id, tone: opts.tone ?? "success", message, ttl, action: opts.action },
   ];
   emit();
   return id;
@@ -46,8 +50,8 @@ export function dismissToast(id: number) {
 }
 
 // Two named cases the save paths fire. Errors linger longer than confirmations.
-export function toastSaved(message = "Saved") {
-  return pushToast(message, { tone: "success" });
+export function toastSaved(message = "Saved", opts: { action?: ToastAction } = {}) {
+  return pushToast(message, { tone: "success", action: opts.action });
 }
 export function toastError(message: string) {
   return pushToast(message, { tone: "danger", ttl: 6000 });
@@ -59,6 +63,12 @@ export function clearAllToasts() {
     items = [];
     emit();
   }
+}
+
+// Read-only snapshot of the current stack (tests, debugging). UI code should
+// subscribe via useToasts instead.
+export function getToasts(): readonly ToastItem[] {
+  return items;
 }
 
 function subscribe(cb: () => void) {

@@ -16,9 +16,10 @@ export {
   toastSaved,
   toastError,
   clearAllToasts,
+  getToasts,
   useToasts,
 } from "./toast/store";
-export type { ToastItem } from "./toast/store";
+export type { ToastItem, ToastAction } from "./toast/store";
 export { useShowMore, ShowMoreControls, ShowMoreTbody, ShowMoreList } from "./ShowMore";
 export { Breadcrumbs } from "./Breadcrumbs";
 export type { Crumb } from "./Breadcrumbs";

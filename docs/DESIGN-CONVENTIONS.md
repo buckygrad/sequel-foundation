@@ -39,7 +39,30 @@ The UX rules that make Project Hub and the Acquisition Hub feel like one product
 
 - **Tile ↔ menu parity.** Every hub tile appears in that section's nav dropdown, added in the same PR, both rendered from one shared registry — locked by a parity unit test so a hand-edited menu can't drift.
 - **Breadcrumbs on nested routes** (code: `ui/Breadcrumbs.tsx`); the last crumb is the current page, unlinked, `aria-current`.
+- **Origin-aware back-nav via a strict allow-list registry.** Deep links into an entity page carry `?from=<origin-key>`; the page resolves the key against a registry (`{ key → { label, href } }`) to render "← Back to {label}", and threads the key through edit round-trips (`returnHref`). Never echo the raw param into an href; guard lookups with `Object.hasOwn`; unknown keys fall back to the default back target. A subpage may consume a *single* origin key by strict equality when only one flow lands there — comment it as deliberately not generalized.
+- **Tabs are URLs.** Tabbed views drive the active tab from a query param through a strict allow-list (`?tab=`, `?view=`), rendered as `<Link scroll={false}>` with `aria-current="page"` — deep-linkable, in history, shareable. Links launched from inside a tab stamp the launching tab so returning lands where the user left. The default tab is the bare URL (omit the param when canonical).
+- **Queues act-and-advance.** A worklist (assignment queue, triage inbox, approval list) never strands the user after an action: the item's departure is confirmed (toast + link, per §3), a session-local record strip preserves what was just done, visited/handled rows are marked (icon + label), and the surface the queue hands off to offers a way back to the queue. Entity names rendered anywhere (tables, cards, panels) are links to their detail page — a plain-text name with a detail page is a dead-end micro-moment.
+- **No zero-exit pages.** Every page offers at least one contextual next step beyond the global nav. Empty states double as navigation: explain what belongs here and link the create/next action.
 - **Print is a feature** (code: print block in `theme.css` + `ui/ExportBar.tsx`): every read-only view saves cleanly to PDF; chrome and export buttons carry `data-no-print`.
+
+## 5a. Navigation & flow review checklist
+
+Run on every new/changed page and flow (synthesized from NN/g cognitive-walkthrough + menu/breadcrumb guidance, GOV.UK confirmation pages, Baymard back-button research, MeasuringU first-click). Score pass/fail; rate failures 0–4 (frequency × impact × persistence); fix 3s and 4s before merge.
+
+Per page:
+- **P1 Where am I?** — current section lit in the nav; title matches the link that got you here.
+- **P2 Where can I go?** — global nav present; breadcrumb when ≥3 levels deep.
+- **P3 First click is obvious** — a fresh colleague's first click for the page's #1 task is correct.
+- **P4 No dead end** — ≥1 contextual next-step link beyond the global nav.
+- **P5 Empty state navigates** — zero-data view explains + offers the create/next CTA.
+- **P6 Back behaves** — back returns to the perceived previous view with state intact.
+
+Per flow:
+- **F1 Walkthrough** — at each step: right goal / control noticed / label connects / progress visible.
+- **F2 Exit at every step** — cancel/back available, non-destructive; no trap states.
+- **F3 Completion answers "what now?"** — confirmation + next-step link (§3 post-action rule).
+- **F4 Queue actions advance** — next item or state-preserved return, never a dead stop.
+- **F5 Path isn't lost-making** — the happy path is short and each hop is a confident choice; don't budget clicks, budget confusion per click.
 
 ## 6. Accessibility floor
 

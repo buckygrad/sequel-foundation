@@ -2,6 +2,8 @@
 
 The shared foundation for Sequel Ortho applications: brand tokens and theme, the design-system UI primitives, LLM plumbing, the deck kit, guide-build machinery, and repo hygiene tooling — extracted from **Project Hub** (`project-insights`) and the **Acquisition Hub** (`Sequel_Ortho`), which previously kept these in sync by hand ("the twin registry").
 
+**New here? Start with [ADOPTING.md](ADOPTING.md)** — the quick start for building a new Sequel app on the foundation or wiring it into an existing one.
+
 Two documents carry the accumulated know-how; read them before building anything user-facing or deck-shaped:
 
 - **[docs/DESIGN-CONVENTIONS.md](docs/DESIGN-CONVENTIONS.md)** — the UX rules that make Sequel apps feel like one family.

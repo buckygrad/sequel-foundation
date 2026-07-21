@@ -36,6 +36,22 @@ export function snapshotEqual(a: FormSnapshot, b: FormSnapshot): boolean {
 }
 
 /**
+ * Keys whose values differ between two snapshots (either direction — added,
+ * removed, or changed). Powers PER-SECTION dirty state: a section is dirty
+ * when any of its field names is in the changed set, and a section save
+ * re-baselines only its own keys so other sections keep their unsaved edits.
+ */
+export function snapshotChangedKeys(a: FormSnapshot, b: FormSnapshot): string[] {
+  const valueEqual = (x: string | string[] | undefined, y: string | string[] | undefined) => {
+    const xa = x == null ? [""] : Array.isArray(x) ? x : [x];
+    const ya = y == null ? [""] : Array.isArray(y) ? y : [y];
+    return xa.length === ya.length && xa.every((v, i) => v === ya[i]);
+  };
+  const keys = new Set([...Object.keys(a), ...Object.keys(b)]);
+  return [...keys].filter((k) => !valueEqual(a[k], b[k]));
+}
+
+/**
  * Shallow object compare for controlled forms: dirty when any own key of
  * `current` differs from `initial` by Object.is. (Nullish and "" are distinct
  * on purpose — clearing a field is a change.)

@@ -40,3 +40,18 @@ describe("shallowDirty", () => {
     expect(shallowDirty({ a: 1, b: 2 }, { a: 1 })).toBe(true);
   });
 });
+
+describe("snapshotChangedKeys", () => {
+  it("names changed, added, and removed keys; absent equals empty string", async () => {
+    const { snapshotChangedKeys } = await import("../ui/form-dirty");
+    const base = { name: "x", pct: "80", tags: ["a", "b"] };
+    expect(snapshotChangedKeys(base, { name: "x", pct: "100", tags: ["a", "b"] })).toEqual(["pct"]);
+    expect(
+      snapshotChangedKeys(base, { name: "x", pct: "80", tags: ["a"], extra: "1" }).sort(),
+    ).toEqual(["extra", "tags"]);
+    // A key that disappears with value "" is not a change (unchecked checkbox
+    // vs empty field parity).
+    expect(snapshotChangedKeys({ note: "" }, {})).toEqual([]);
+    expect(snapshotChangedKeys({ box: "on" }, {})).toEqual(["box"]);
+  });
+});

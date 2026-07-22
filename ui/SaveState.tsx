@@ -18,7 +18,7 @@ export function SaveStateIndicator({
   }
   if (dirty) {
     return (
-      <span className="inline-flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400">
+      <span className="inline-flex items-center gap-1 text-xs text-amber-700 dark:text-amber-400">
         <span aria-hidden>●</span> Unsaved changes
       </span>
     );

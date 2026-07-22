@@ -27,6 +27,9 @@ Every overrun traces back to trusting `fit:"shrink"`. Rules:
 6. **Chips/short labels need `margin: 0` (+ `wrap:false`)** — the default cell inset mid-word-wraps a 4-letter "HIGH" chip.
 7. **Bound the headline box** under a big title so a 3-line headline can't collide with the section below.
 8. **Measure, don't eyeball.** Render the stress case and crop the exact region (`pdftoppm -r 200` + `sips -c H W --cropOffset top left`). A change that "looks the same" usually did nothing.
+9. **Never position text from a computed table bottom.** `addTable` rows render ~2× their nominal `rowH` once cell content wraps, so `y = tableY + rowH × rows` lands notes/keys ON the table (this exact bug shipped in a board-facing deck). Pin note/footnote bands at a **fixed y** near the slide bottom instead.
+10. **Bound variable-line cells deterministically.** A roster cell prints at most 3 names + `+N more`; a code list joins on commas instead of one-per-line. Cap the line count at the data layer so row heights are bounded — then the fixed note band from rule 9 is provably safe.
+11. **No legends/keys under variable-height tables.** A per-slide color key positioned below a table is an overlay hazard by construction. Either omit the key (colored ● + label cells decode themselves) or anchor it to the slide's fixed footer zone — never to a computed table bottom.
 
 ## 4. Layout & color rules
 
@@ -36,6 +39,7 @@ Every overrun traces back to trusting `fit:"shrink"`. Rules:
 - Severity chips = filled rounded rect (red HIGH / amber MED, white text) + bold title beside + body filling the rest.
 - Size callout boxes to the **remaining space above the footer**, not a fixed height.
 - **When given a reference deck, replicate its exact structure** — render it, zoom regions, copy the layout. Owners notice deviations.
+- **Progress callout convention**: any chart that shades achieved-to-date also **prints the numbers** — `▲ Achieved to date: $X of $Y plan growth (Z%)` (bold navy, blue ▲, optional grey tail), via `achievedCallout` in deck-kit. Per-bar detail uses the same glyph (`▲ $4.5M` under the bar's category label, zero-suppressed — skip when the value formats the same as zero). Shading alone is not a progress story; hover tooltips don't exist on paper.
 
 ## 5. Size discipline (the Netlify truncation family)
 

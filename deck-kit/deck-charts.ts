@@ -69,14 +69,20 @@ export function coverageBar(
 // `achieved` (optional, increments only) shades that much of the segment solid
 // from its base — the faded remainder is still-to-deliver plan value. `fmt`
 // formats value labels (defaults to $M); increments get a `+` prefix.
+// `fmtProgress` (optional) prints a per-bar `▲ <achieved>` line under the
+// category label of every increment carrying progress — zero-suppressed: a
+// bar whose achieved formats the same as zero prints nothing. Passing it
+// reserves an extra label row below the axis.
 export type WaterfallBar = { label: string; kind: "baseline" | "increment" | "total"; start: number; end: number; value: number; achieved?: number };
 export function waterfall(
   g: IPptxGenJSSlide,
-  opts: { x: number; y: number; w: number; h: number; bars: WaterfallBar[]; target?: number | null; fmt?: (n: number) => string },
+  opts: { x: number; y: number; w: number; h: number; bars: WaterfallBar[]; target?: number | null; fmt?: (n: number) => string; fmtProgress?: (n: number) => string },
 ) {
-  const { x, y, w, h, bars, target } = opts;
+  const { x, y, w, h, bars, target, fmtProgress } = opts;
   const fmt = opts.fmt ?? fmtM;
-  const plotH = h - 0.62; // leave room for wrapped category labels under the axis
+  // Room for wrapped category labels under the axis — plus the per-bar
+  // achieved line when fmtProgress is active.
+  const plotH = h - (fmtProgress ? 0.86 : 0.62);
   const max = Math.max(...bars.map((b) => b.end), target ?? 0) * 1.12 || 1;
   const sy = (v: number) => (v / max) * plotH;
   const n = bars.length;
@@ -110,8 +116,36 @@ export function waterfall(
     const vlabel = b.kind === "increment" ? `+${fmt(b.value)}` : fmt(b.end);
     t(g, vlabel, { x: bx - 0.1, y: barY - 0.26, w: bw + 0.2, h: 0.24, align: "center", fontSize: 9.5, bold: true, color: b.kind === "increment" ? BLUE : NAVY });
     // category label below the axis (long pillar names wrap — deterministic 8pt)
-    t(g, b.label, { x: bx - 0.12, y: axisY + 0.06, w: bw + 0.24, h: 0.56, align: "center", valign: "top", fontSize: 8, color: BODY });
+    t(g, b.label, { x: bx - 0.12, y: axisY + 0.06, w: bw + 0.24, h: fmtProgress ? 0.4 : 0.56, align: "center", valign: "top", fontSize: 8, color: BODY });
+    // per-bar achieved line (zero-suppressed; increments only)
+    if (fmtProgress && b.kind === "increment" && (b.achieved ?? 0) > 0 && fmtProgress(b.achieved!) !== fmtProgress(0)) {
+      t(g, `▲ ${fmtProgress(b.achieved!)}`, { x: bx - 0.12, y: axisY + 0.5, w: bw + 0.24, h: 0.24, align: "center", fontSize: 8.5, bold: true, color: NAVY });
+    }
   });
+}
+
+// ---- achieved-to-date callout (the printed progress detail) ----
+// House convention (DECK-CRAFT §4): a chart that shades achieved-to-date also
+// prints the numbers — "▲ Achieved to date: <achieved> of <goal> <noun>
+// (<pct>%)" as blue ▲ + bold navy body + optional grey tail. Renders nothing
+// when achieved or goal is not positive, so callers pass raw totals unguarded.
+export function achievedCallout(
+  g: IPptxGenJSSlide,
+  opts: { x: number; y: number; w: number; achieved: number; goal: number; fmt?: (n: number) => string; noun?: string; tail?: string; fontSize?: number },
+) {
+  const { x, y, w, achieved, goal } = opts;
+  if (!(achieved > 0) || !(goal > 0)) return;
+  const fmt = opts.fmt ?? fmtM;
+  const noun = opts.noun ?? "plan growth";
+  const runs = [
+    { text: "▲ ", options: { color: BLUE, bold: true } },
+    {
+      text: `Achieved to date: ${fmt(achieved)} of ${fmt(goal)} ${noun} (${Math.round((achieved / goal) * 100)}%)`,
+      options: { color: NAVY, bold: true },
+    },
+    ...(opts.tail ? [{ text: `   ${opts.tail}`, options: { color: GREY, bold: false } }] : []),
+  ];
+  g.addText(runs as never, { x, y, w, h: 0.32, fontFace: FONT, fontSize: opts.fontSize ?? 11.5 } as never);
 }
 
 // ---- horizontal bar chart (ranked) ----

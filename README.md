@@ -18,7 +18,7 @@ Two documents carry the accumulated know-how; read them before building anything
 | `@sequel/foundation/brand/assets/*` | Logo PNGs (navy / white / banner) — see `brand/BRAND.md` |
 | `@sequel/foundation/theme` | Theme model: modes, `resolveTheme`, `themeInitScript(storageKey)` |
 | `@sequel/foundation/theme/ThemeToggle` | The Light / Dark / Browser header toggle (client component) |
-| `@sequel/foundation/ui` | Button (incl. the accent hand-off variant), Callout, Field, StatusBadges, SaveStateIndicator, Toast + viewport/store, ShowMore, Breadcrumbs, ExportBar |
+| `@sequel/foundation/ui` | Button (incl. the accent hand-off variant), Callout, Field, StatusBadges, SaveStateIndicator, Toast + viewport/store, ShowMore, Breadcrumbs, ExportBar, NavProgress + LinkPendingHint (route-transition pending feedback), BackToTop |
 | `@sequel/foundation/llm` | `getClient`, `modelFor`/`withModelFallback` (task-class model config), `llmErrorEvent`, `streamJob`/`consumeLlmStream` |
 | `@sequel/foundation/deck-kit` | Native-shape chart primitives (`deck-charts`), the branded-deck engine (`createBrandDeckEngine` + table/status/card primitives), `slimPresentationZip` (dedupe + prune), brand `FONT` |
 | `@sequel/foundation/docs-kit/guide-contents` | Bookmarked-outline Contents machinery for generated .docx guides |

@@ -128,6 +128,83 @@
   --color-blue-800: #232a7a;
   --color-blue-900: #0f1263;
   --color-blue-950: #080a3a;
+
+  /* Motion tokens — route-transition + scroll affordances (ui/NavProgress,
+   * ui/LinkPendingHint, ui/BackToTop). Pending indicators hold invisible for
+   * their first ~250ms so sub-perceptible waits never flicker (NN/g
+   * response-time limits); keyframes live below at top level. */
+  --animate-seq-nav-progress: seq-nav-progress 8s cubic-bezier(0.1, 0.7, 0.4, 1) forwards;
+  --animate-seq-nav-progress-done: seq-nav-progress-done 0.3s ease-out forwards;
+  --animate-seq-fade-in-delayed: seq-fade-in-delayed 0.2s ease 0.25s both;
+  --animate-seq-fade-in: seq-fade-in 0.15s ease both;
+}
+
+/* The nav bar crawls fast early (ease-out) and parks near the right edge; the
+ * route change swaps it to the done fade. Opacity holds at 0 for the first 6%
+ * of 8s ≈ 480ms-worth of curve — combined with the crawl starting from
+ * scaleX(0) nothing perceptible paints for fast transitions. */
+@keyframes seq-nav-progress {
+  0% {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  3% {
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(0.92);
+    opacity: 1;
+  }
+}
+@keyframes seq-nav-progress-done {
+  0% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}
+@keyframes seq-fade-in-delayed {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes seq-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Reduced motion: keep the FEEDBACK, drop the MOTION — a static translucent
+ * bar instead of the crawl, hints/pills appear without animating. Smooth
+ * scrolling falls back per-component (ui/BackToTop checks the same query). */
+@media (prefers-reduced-motion: reduce) {
+  .animate-seq-nav-progress {
+    animation: none;
+    transform: scaleX(1);
+    opacity: 0.5;
+  }
+  .animate-seq-nav-progress-done {
+    animation: none;
+    opacity: 0;
+  }
+  .animate-seq-fade-in-delayed,
+  .animate-seq-fade-in {
+    animation: none;
+  }
 }
 
 /* No-JS fallback: with scripts disabled nothing stamps data-theme, so follow

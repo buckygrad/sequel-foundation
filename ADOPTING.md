@@ -35,7 +35,7 @@ transpilePackages: ["@sequel/foundation"],
 @source "../node_modules/@sequel/foundation";
 ```
 
-**3. Layout** — load Montserrat + Geist Mono via `next/font`, render `themeInitScript(<your key>)` as the first element of `<body>`, and put `<ThemeToggle storageKey={…}/>` in your header. Copy the exact wiring from the template's [`app/layout.tsx`](https://github.com/buckygrad/sequel-app-template/blob/main/app/layout.tsx).
+**3. Layout** — load Montserrat + Geist Mono via `next/font`, render `themeInitScript(<your key>)` as the first element of `<body>`, and put `<ThemeToggle storageKey={…}/>` in your header. Mount `<NavProgress/>` (route-transition top bar) and `<ToastViewport/>` once in `<body>` too. Copy the exact wiring from the template's [`app/layout.tsx`](https://github.com/buckygrad/sequel-app-template/blob/main/app/layout.tsx).
 
 ## What's in the box
 
@@ -43,7 +43,7 @@ transpilePackages: ["@sequel/foundation"],
 |---|---|
 | `…/brand/theme.css` | Brand tokens with dark mode, RYG status colors, focus ring, print rules |
 | `…/theme` | Light / Dark / Browser theme with a no-flash pre-hydration script |
-| `…/ui` | Button (incl. the chartreuse assign/hand-off variant), Callout, Field, badges, toasts (with next-step action links), the save-surface kit (`useSaveRunner` / `useFormDirty` / `SectionSaveBar` + `SaveStateIndicator` — dirty-disabled, save-in-place, per-section saves), ShowMore, Breadcrumbs, ExportBar |
+| `…/ui` | Button (incl. the chartreuse assign/hand-off variant), Callout, Field, badges, toasts (with next-step action links), the save-surface kit (`useSaveRunner` / `useFormDirty` / `SectionSaveBar` + `SaveStateIndicator` — dirty-disabled, save-in-place, per-section saves), ShowMore, Breadcrumbs, ExportBar, `NavProgress` + `LinkPendingHint` (route-transition pending feedback), `BackToTop` |
 | `…/llm` | Claude client seam, per-task model configuration with fallback, streaming that survives serverless timeouts |
 | `…/deck-kit` | Branded PowerPoint engine (approved template, native editable charts, auto-slimming) |
 | `…/docs-kit/*` | Word/Excel brand constants and styles, clickable-contents machinery for generated guides |
